@@ -32,18 +32,6 @@ data = raw_data.loc[:, ['age', 'c_charge_degree', 'race', 'age_cat', 'score_text
 data = data[(data['days_b_screening_arrest'] <= 30 ) & (data['days_b_screening_arrest'] >= -30 ) & (data['is_recid'] != -1 ) & (data['c_charge_degree'] != "0" ) & (data['score_text'] != 'N/A')]
 data.info()
 
-#j_in = pd.to_datetime(data['c_jail_in'])
-#j_out = pd.to_datetime(data['c_jail_out'])
-#length_of_stay = pd.to_numeric(j_out, errors='coerce').astype(pd.Int64Dtype()) - pd.to_numeric(j_in, errors='coerce').astype(pd.Int64Dtype())
-#length_of_stay.to_list
-#length_of_stay.astype(int)
-#df = data['decile_score']
-#ls2 = length_of_stay.iloc[1]
-#print(len(length_of_stay))
-#print(len(df))
-# stats.pearsonr(ls2, df)
-# length_of_stay.corr(df)
-
 data['age_cat'].describe()
 
 data['race'].describe()
@@ -108,18 +96,6 @@ gender_factor = data['sex'].to_list
 score_factor = data['score_text'].to_list
 
 score_factor = data[(data['score_text'] != 'Low')]
-
-"""reference code below"""
-
-#glm_binom = sm.GLM(data.endog, data.exog, family=sm.families.Binomial())
-#res = glm_binom.fit()
-#print(res.summary())
-
-"""attempt"""
-
-#df = {gender_factor, age_factor, race_factor, crime_factor, data['two_year_recid'].to_list}
-#print(score_factor)
-#glm = sm.GLM(score_factor, age_factor, family=sm.families.Binomial())
 
 """separation of race"""
 
@@ -220,7 +196,6 @@ reduce.info()
 
 #this one trains for whites vs non whites
 
-
 import pandas as pd
 import matplotlib as pt
 from matplotlib import pyplot as plt
@@ -262,15 +237,10 @@ regressor.fit(x_train,y_train)
 
 y_pred = regressor.predict(x_test)
 
-#reduce.insert(15, "Predict", y_pred, True)
 
 score = regressor.score(x_test, y_test)
 print(score)
-#plt.scatter(x_train, y_train, color = 'g')
-#plt.plot(x_test, y_pred, color = 'k')
-#plt.show()
 
-#x_test.to_csv('/content/compaspredict.csv', mode='a', index=False, header=True)
 pd.DataFrame(x_test).to_csv('/content/compaspredict.csv', header = True)
 
 predictions = pd.read_csv('/content/compaspredict.csv', header=0)
@@ -299,29 +269,29 @@ print(len(race))
 print(len(predict_val))
 
 counter = 0
-goodstuff = []
+gs = []
 for x in range(1443):
   #white and low risk
   if(race[counter] == 0 and predict_val[counter] == 0):
-      goodstuff.append(0)
+      gs.append(0)
   #white and high risk    
   elif(race[counter] == 0 and predict_val[counter] == 1):
-      goodstuff.append(1)
+      gs.append(1)
   #not white and low risk    
   elif(race[counter] == 1 and predict_val[counter] == 0):
-      goodstuff.append(2)
+      gs.append(2)
   #not white and high risk    
   elif(race[counter] == 1 and predict_val[counter] == 1):
-      goodstuff.append(3)          
+      gs.append(3)          
   counter += 1
 
 print(goodstuff)
-print(len(goodstuff))
+print(len(gs))
 
-whitelow = goodstuff.count(0)/race.count(0)
-whitehigh = goodstuff.count(1)/race.count(0)
-nwhitelow = goodstuff.count(2)/race.count(1)
-nwhitehigh = goodstuff.count(3)/race.count(1)
+whitelow = gs.count(0)/race.count(0)
+whitehigh = gs.count(1)/race.count(0)
+nwhitelow = gs.count(2)/race.count(1)
+nwhitehigh = gs.count(3)/race.count(1)
 print(whitelow)
 print(whitehigh)
 print(nwhitelow)
@@ -443,35 +413,16 @@ regressor.fit(x_train,y_train)
 
 y_pred = regressor.predict(x_test)
 
-#reduce.insert(9, "Predict", label, True)
-
 score = regressor.score(x_test, y_test)
 print(score)
 print(y_pred)
-#plt.scatter(x_train, y_train, color = 'g')
-#plt.plot(x_test, y_pred, color = 'k')
-#plt.show()
 
-print(x_train[0])
 
-print(x)
-print("**********************")
-print(z)
-print("**********************")
-print(s)
-print("**********************")
-print(a)
-print("**********************")
-print(p)
-print("**********************")
-print(c)
-print("**********************")
-print(d)
 
 with open('test.txt', 'w') as f:
   for i in range(len(x_test)):
     f.write(str(x_test[i])+'\n')
-#print(x_test)
+
 
 print(y_pred)
 with open('scores.txt', 'w') as f:
@@ -483,30 +434,6 @@ len(list(filtered))
 
 filtered = filter(lambda x: x < 0.5, y_pred)
 len(list(filtered))
-
-"""data analysis"""
-
-#here i would create a two-dim list with the race data from x_test and then the rounded scores
-#matrix = []
-#for i in range(len(y_pred)):
-#    matrix.append([x_test[i], y_pred[i]])
-
-#then, i would be able to see the ratio of the race data and high/low score
-
-#something like
-
-# whitecount = x_test.count(0)
-# lowcount = y_pred.count(0)
-# highcount = y_pred.count(1)
-# lowratio = whitecount/lowcount
-# high ratio = whitecount/highcount
-
-# blackcount = x_test.count(0)
-# lowcount = y_pred.count(0)
-# highcount = y_pred.count(1)
-# lowratio = blackcount/lowcount
-# high ratio = blackcount/highcount
-
 
 
 """Risk of Violent Recidivism"""
